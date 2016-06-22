@@ -55,8 +55,9 @@ IF ( BUILD_STATIC )
   CLEAN_DIRECT_OUTPUT 1
   VERSION "${RTT_VERSION}"
   COMPILE_DEFINITIONS "${OROCOS-RTT_DEFINITIONS}")
-ENDIF( BUILD_STATIC )
 
+ENDIF( BUILD_STATIC )
+IF(NOT NOT_BUILD_SHARED )
   ADD_LIBRARY(orocos-rtt-corba-${OROCOS_TARGET}_dynamic SHARED ${CPPS})
   TARGET_LINK_LIBRARIES(orocos-rtt-corba-${OROCOS_TARGET}_dynamic 
 	orocos-rtt-${OROCOS_TARGET}_dynamic
@@ -70,6 +71,7 @@ ENDIF( BUILD_STATIC )
   SOVERSION "${RTT_VERSION_MAJOR}.${RTT_VERSION_MINOR}"
   VERSION "${RTT_VERSION}"
   INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+  ENDIF(NOT NOT_BUILD_SHARED )
 
 create_pc_flags( "${CORBA_DEFINITIONS}" "${CORBA_INCLUDE_DIRS}" "${CORBA_LIBRARIES}" RTT_CORBA_DEFINES RTT_CORBA_CFLAGS RTT_CORBA_LINKFLAGS)
 create_pc_flags( "${RTT_DUMMY}" "${RTT_DUMMY}" "${CORBA_USER_LINK_LIBS}" RTT_DUMMY RTT_DUMMY RTT_CORBA_USER_LINKFLAGS)
@@ -80,22 +82,32 @@ CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/rtt-corba-config.h.in ${CMAKE_CURREN
 IF ( BUILD_STATIC )
   INSTALL(TARGETS             orocos-rtt-corba-static_${OROCOS_TARGET}
           EXPORT              ${LIBRARY_EXPORT_FILE}
-          ARCHIVE DESTINATION lib )
+          ARCHIVE DESTINATION lib
+          LIBRARY DESTINATION lib
+          RUNTIME DESTINATION bin )
+
+  if (PLUGINS_CORBA_TRANSPORT_TYPES)
+    SET(RTT_DEFINITIONS "${OROCOS-RTT_DEFINITIONS}")
+    ADD_RTT_TYPEKIT(rtt-transport-corba ${RTT_VERSION} CorbaLib.cpp)
+    target_link_libraries(rtt-transport-corba-${OROCOS_TARGET}_plugin orocos-rtt-corba-static_${OROCOS_TARGET})
+  endif()
 ENDIF( BUILD_STATIC )
+ 
+IF(NOT NOT_BUILD_SHARED )
+  INSTALL(TARGETS             orocos-rtt-corba-${OROCOS_TARGET}_dynamic
+          EXPORT              ${LIBRARY_EXPORT_FILE}
+          ARCHIVE DESTINATION lib
+          LIBRARY DESTINATION lib
+          RUNTIME DESTINATION bin )
 
   if (PLUGINS_CORBA_TRANSPORT_TYPES)
     SET(RTT_DEFINITIONS "${OROCOS-RTT_DEFINITIONS}")
     ADD_RTT_TYPEKIT(rtt-transport-corba ${RTT_VERSION} CorbaLib.cpp)
     target_link_libraries(rtt-transport-corba-${OROCOS_TARGET}_plugin orocos-rtt-corba-${OROCOS_TARGET}_dynamic )
   endif()
-
+ENDIF(NOT NOT_BUILD_SHARED )
 
   INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/orocos-rtt-corba-${OROCOS_TARGET}.pc DESTINATION  lib/pkgconfig )
-  INSTALL(TARGETS             orocos-rtt-corba-${OROCOS_TARGET}_dynamic
-          EXPORT              ${LIBRARY_EXPORT_FILE}
-          ARCHIVE DESTINATION lib
-          LIBRARY DESTINATION lib
-          RUNTIME DESTINATION bin )
   INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/TransportPlugin.hpp ${CMAKE_CURRENT_BINARY_DIR}/rtt-corba-config.h ${IDLS} DESTINATION include/rtt/transports/corba )
 
 ENDIF(ENABLE_CORBA)

@@ -53,7 +53,9 @@
 #include "../internal/GlobalService.hpp"
 
 #include <cstdlib>
+#ifndef __RTEMS__
 #include <dlfcn.h>
+#endif
 
 #include <vector>
 #include <set>
@@ -640,6 +642,7 @@ bool PluginLoader::isLoadedInternal(string file)
 
 // loads a single plugin in the current process.
 bool PluginLoader::loadInProcess(string file, string shortname, string kind, bool log_error) {
+    #ifndef __RTEMS__
     path p(file);
     char* error;
     void* handle;
@@ -700,6 +703,7 @@ bool PluginLoader::loadInProcess(string file, string shortname, string kind, boo
             log(Error) << "Plugin "<< plugname <<" reports to be compiled for OROCOS_TARGET "<< targetname
                     << " while we are running on target "<< OROCOS_TARGET_NAME <<". Unloading."<<endlog();
             dlclose(handle);
+            #endif
             return false;
         }
 

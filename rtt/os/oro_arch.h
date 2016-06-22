@@ -11,6 +11,8 @@
 #         include "oro_i386/oro_arch.h"
 #      elif defined( OROBLD_OS_ARCH_x86_64 )
 #         include "oro_x86_64/oro_arch.h"
+#      elif defined( OROBLD_OS_sparc)
+#         include "oro_sparc/oro_arch.h"
 #      elif defined( OROBLD_OS_ARCH_ppc )
 #         include "oro_powerpc/oro_arch.h"
 #      else

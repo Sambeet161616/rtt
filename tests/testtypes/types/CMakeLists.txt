@@ -1,5 +1,11 @@
 
+  if (NOT NOT_BUILD_SHARED)
   ADD_LIBRARY(testtypes_plugin SHARED plugins_test_types.cpp sequence_types.cpp struct_types.cpp array_types.cpp)
+  endif (NOT NOT_BUILD_SHARED)
+
+  if (BUILD_STATIC)
+  ADD_LIBRARY(testtypes_plugin STATIC plugins_test_types.cpp sequence_types.cpp struct_types.cpp array_types.cpp)
+  endif (BUILD_STATIC)
 
   # Allows us to build the plugin not in the debug/ or release/ subdir
   if (MSVC)

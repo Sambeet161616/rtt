@@ -127,7 +127,7 @@ namespace RTT
 #define ORO_TYPEKIT_PLUGIN( TYPEKIT ) \
     namespace RTT { class TaskContext; } \
     extern "C" {                      \
-        RTT_EXPORT bool loadRTTPlugin(RTT::TaskContext* tc); \
+        static RTT_EXPORT bool loadRTTPlugin(RTT::TaskContext* tc); \
         bool loadRTTPlugin(RTT::TaskContext* tc) { \
             if (tc == 0) { \
                 RTT::types::TypekitRepository::Import( new TYPEKIT() ); \
@@ -135,12 +135,12 @@ namespace RTT
             } \
             return false; \
         } \
-        RTT_EXPORT std::string getRTTPluginName(); \
+        static RTT_EXPORT std::string getRTTPluginName(); \
         std::string getRTTPluginName() { \
         TYPEKIT tk; \
         return tk.getName(); \
         } \
-        RTT_EXPORT std::string getRTTTargetName(); \
+        static RTT_EXPORT std::string getRTTTargetName(); \
         std::string getRTTTargetName() { \
             return OROCOS_TARGET_NAME; \
         } \

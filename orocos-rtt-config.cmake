@@ -114,11 +114,19 @@ if (EXISTS "${OROCOS-RTT_IMPORT_FILE}")
   include("${OROCOS-RTT_IMPORT_FILE}")
 
 # Core RTT libraries
-set(OROCOS-RTT_TARGET "${PREFIX}orocos-rtt-${OROCOS_TARGET}_dynamic")
+if (BUILD_STATIC)
+	set (TYPE "static")
+endif (BUILD_STATIC)
+
+if (NOT NOT_BUILD_SHARED)
+	set (TYPE "dynamic")
+endif (NOT NOT_BUILD_SHARED)
+
+set(OROCOS-RTT_TARGET "${PREFIX}orocos-rtt-${OROCOS_TARGET}_${TYPE}")
 if(TARGET ${OROCOS-RTT_TARGET})
   set(OROCOS-RTT_LIBRARIES ${OROCOS-RTT_TARGET})
 else()
-  message(FATAL_ERROR "Imported target ${PREFIX}orocos-rtt-${OROCOS_TARGET}_dynamic not found. Please contact a project developer to fix this issue")
+  message(FATAL_ERROR "Imported target ${PREFIX}orocos-rtt-${OROCOS_TARGET}_${TYPE} not found. Please contact a project developer to fix this issue")
 endif()
 
 # Typekit support
@@ -129,7 +137,7 @@ if(TARGET ${OROCOS-RTT_TYPEKIT_TARGET})
 endif()
 
 # Corba support
-set(OROCOS-RTT_CORBA_TARGET "${PREFIX}orocos-rtt-corba-${OROCOS_TARGET}_dynamic")
+set(OROCOS-RTT_CORBA_TARGET "${PREFIX}orocos-rtt-corba-${OROCOS_TARGET}_${TYPE}")
 if(TARGET ${OROCOS-RTT_CORBA_TARGET})
   set(OROCOS-RTT_CORBA_FOUND TRUE)
   set(FOUND_TRANSPORTS "${FOUND_TRANSPORTS} corba")
@@ -137,7 +145,7 @@ if(TARGET ${OROCOS-RTT_CORBA_TARGET})
 endif()
 
 # Mqueue support
-set(OROCOS-RTT-MQUEUE_TARGET "${PREFIX}orocos-rtt-mqueue-${OROCOS_TARGET}_dynamic")
+set(OROCOS-RTT-MQUEUE_TARGET "${PREFIX}orocos-rtt-mqueue-${OROCOS_TARGET}_${TYPE}")
 if(TARGET ${OROCOS-RTT-MQUEUE_TARGET})
   set(OROCOS-RTT_MQUEUE_FOUND TRUE)
   set(FOUND_TRANSPORTS "${FOUND_TRANSPORTS} mqueue")

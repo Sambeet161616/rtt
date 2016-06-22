@@ -33,7 +33,7 @@ IF ( BUILD_STATIC )
   COMPILE_DEFINITIONS "${OROCOS-RTT_DEFINITIONS}")
 
 ENDIF( BUILD_STATIC )
-
+IF(NOT NOT_BUILD_SHARED )
   ADD_LIBRARY(orocos-rtt-mqueue-${OROCOS_TARGET}_dynamic SHARED ${CPPS})
   TARGET_LINK_LIBRARIES(orocos-rtt-mqueue-${OROCOS_TARGET}_dynamic 
 	orocos-rtt-${OROCOS_TARGET}_dynamic
@@ -47,6 +47,8 @@ ENDIF( BUILD_STATIC )
   COMPILE_DEFINITIONS "${OROCOS-RTT_DEFINITIONS}"
   SOVERSION "${RTT_VERSION_MAJOR}.${RTT_VERSION_MINOR}"
   VERSION "${RTT_VERSION}"
+
+ENDIF(NOT NOT_BUILD_SHARED )
   INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib")
 
 create_pc_flags( "${MQ_DEFINITIONS}" "${MQ_INCLUDE_DIRS}" "${MQ_LIBRARIES}" RTT_MQ_DEFINES RTT_MQ_CFLAGS RTT_MQ_LINKFLAGS)
@@ -58,7 +60,15 @@ IF ( BUILD_STATIC )
   INSTALL(TARGETS             orocos-rtt-mqueue-${OROCOS_TARGET}_static
           EXPORT              ${LIBRARY_EXPORT_FILE}
           ARCHIVE DESTINATION lib )
+  #target_link_libraries( rtt-transport-mqueue-${OROCOS_TARGET}_plugin orocos-rtt-mqueue-${OROCOS_TARGET}_static)
 ENDIF( BUILD_STATIC )
+
+IF(NOT NOT_BUILD_SHARED)
+  INSTALL(TARGETS             orocos-rtt-mqueue-${OROCOS_TARGET}_dynamic
+          EXPORT              ${LIBRARY_EXPORT_FILE}
+          LIBRARY DESTINATION lib RUNTIME DESTINATION bin )
+  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/orocos-rtt-mqueue-${OROCOS_TARGET}.pc DESTINATION  lib/pkgconfig )
+ENDIF(NOT NOT_BUILD_SHARED)
 
   SET(RTT_DEFINITIONS "${OROCOS-RTT_DEFINITIONS}")
   ADD_RTT_TYPEKIT( rtt-transport-mqueue ${RTT_VERSION} MQLib.cpp)
@@ -66,10 +76,6 @@ ENDIF( BUILD_STATIC )
   set_target_properties( rtt-transport-mqueue-${OROCOS_TARGET}_plugin PROPERTIES
     LINK_FLAGS "${MQ_LDFLAGS} ${CMAKE_LD_FLAGS}")
 
-  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/orocos-rtt-mqueue-${OROCOS_TARGET}.pc DESTINATION  lib/pkgconfig )
-  INSTALL(TARGETS             orocos-rtt-mqueue-${OROCOS_TARGET}_dynamic
-          EXPORT              ${LIBRARY_EXPORT_FILE}
-          LIBRARY DESTINATION lib RUNTIME DESTINATION bin )
   INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rtt-mqueue-config.h TransportPlugin.hpp DESTINATION include/rtt/transports/mqueue )
 
 ENDIF(ENABLE_MQ)

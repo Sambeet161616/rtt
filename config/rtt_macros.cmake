@@ -40,8 +40,19 @@ ENDMACRO( GLOBAL_ADD_SRC )
 # The resulting filename is '${name}-${OROCOS_TARGET}[.dll|.so|...]'
 #
 macro(ADD_RTT_TYPEKIT name version)
-  ADD_LIBRARY(${name}-${OROCOS_TARGET}_plugin SHARED ${ARGN})
-  STRING( REGEX MATCHALL "[0-9]+" versions ${version} )
+	IF ( BUILD_STATIC )
+      ADD_LIBRARY(${name}-${OROCOS_TARGET}_plugin STATIC ${ARGN})
+    ENDIF ( BUILD_STATIC )
+
+  IF (NOT NOT_BUILD_SHARED)
+  IF (UNIX AND NOT APPLE)
+    SET_TARGET_PROPERTIES( ${name}-${OROCOS_TARGET}_plugin PROPERTIES
+         LINK_FLAGS "-Wl,-zdefs")
+    ENDIF ()
+  ENDIF()
+
+  target_link_libraries(${name}-${OROCOS_TARGET}_plugin orocos-rtt-${OROCOS_TARGET}_dynamic)
+  STRING( REGEX MATCHALL "[0-9]" versions ${version} )
   LIST( GET versions 0 version_major)
   LIST( GET versions 1 version_minor)
   LIST( GET versions 2 version_patch)
@@ -54,9 +65,7 @@ macro(ADD_RTT_TYPEKIT name version)
     INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib/orocos${OROCOS_SUFFIX};${CMAKE_INSTALL_PREFIX}/lib;${AC_INSTALL_DIR}"
 	INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib/orocos${OROCOS_SUFFIX}/types"
     CLEAN_DIRECT_OUTPUT 1)
-  IF (UNIX AND NOT APPLE)
-    SET_TARGET_PROPERTIES( ${name}-${OROCOS_TARGET}_plugin PROPERTIES
-         LINK_FLAGS "-Wl,-zdefs")
+
   ENDIF ()
   if (DLL_EXPORT_PREFIX)
     string(TOUPPER ${DLL_EXPORT_PREFIX} UDLL_EXPORT_PREFIX )
@@ -64,8 +73,7 @@ macro(ADD_RTT_TYPEKIT name version)
     SET_TARGET_PROPERTIES( ${name}-${OROCOS_TARGET}_plugin PROPERTIES DEFINE_SYMBOL "${DEFINE_PREFIX}")
   endif()
 
-  target_link_libraries(${name}-${OROCOS_TARGET}_plugin orocos-rtt-${OROCOS_TARGET}_dynamic)
-
+  
   if(DLL_EXPORT_PREFIX)
     configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/rtt-${DLL_EXPORT_PREFIX}-config.h.in ${CMAKE_CURRENT_BINARY_DIR}/rtt-${DLL_EXPORT_PREFIX}-config.h @ONLY)
   endif()
@@ -113,32 +121,34 @@ endmacro(ADD_RTT_TYPEKIT name)
 # The resulting filename is '${name}-${OROCOS_TARGET}[.dll|.so|...]'
 #
 macro(ADD_RTT_PLUGIN name version)
-  ADD_LIBRARY(${name}-${OROCOS_TARGET}_plugin SHARED ${ARGN})
-  STRING( REGEX MATCHALL "[0-9]+" versions ${version} )
-  LIST( GET versions 0 version_major)
-  LIST( GET versions 1 version_minor)
-  LIST( GET versions 2 version_patch)
-  SET_TARGET_PROPERTIES( ${name}-${OROCOS_TARGET}_plugin PROPERTIES
-    VERSION "${version}"
-    SOVERSION "${version_major}.${version_minor}"
-    OUTPUT_NAME ${name}-${OROCOS_TARGET}
-    COMPILE_DEFINITIONS "${RTT_DEFINITIONS}"
-    INSTALL_RPATH_USE_LINK_PATH 1
-    INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib/orocos${OROCOS_SUFFIX}/types;${CMAKE_INSTALL_PREFIX}/lib;${AC_INSTALL_DIR}"
-	INSTALL_NAME_DIR "${CMAKE_INSTALL_PREFIX}/lib/orocos${OROCOS_SUFFIX}/plugins"
-    CLEAN_DIRECT_OUTPUT 1)
-  IF (UNIX AND NOT APPLE)
-    SET_TARGET_PROPERTIES( ${name}-${OROCOS_TARGET}_plugin PROPERTIES
-         LINK_FLAGS "-Wl,-zdefs")
-  ENDIF ()
+   IF ( BUILD_STATIC )
+      ADD_LIBRARY(${name}-${OROCOS_TARGET}_plugin STATIC ${ARGN})
+      target_link_libraries(${name}-${OROCOS_TARGET}_plugin orocos-rtt-${OROCOS_TARGET}_static)
+  ENDIF(BUILD_STATIC)
 
-  if (DLL_EXPORT_PREFIX)
-    string(TOUPPER ${DLL_EXPORT_PREFIX} UDLL_EXPORT_PREFIX )
-    set(DEFINE_PREFIX "RTT_${UDLL_EXPORT_PREFIX}_DLL_EXPORT")
-    SET_TARGET_PROPERTIES( ${name}-${OROCOS_TARGET}_plugin PROPERTIES DEFINE_SYMBOL "${DEFINE_PREFIX}")
-  endif()
+  IF (NOT NOT_BUILD_SHARED)
+      ADD_LIBRARY(${name}-${OROCOS_TARGET}_plugin SHARED ${ARGN})
+      IF (UNIX AND NOT APPLE)
+        SET_TARGET_PROPERTIES( ${name}-${OROCOS_TARGET}_plugin PROPERTIES
+             LINK_FLAGS "-Wl,-zdefs")
+      ENDIF ()
+      target_link_libraries(${name}-${OROCOS_TARGET}_plugin orocos-rtt-${OROCOS_TARGET}_dynamic)
+   ENDIF(NOT NOT_BUILD_SHARED)
 
-  target_link_libraries(${name}-${OROCOS_TARGET}_plugin orocos-rtt-${OROCOS_TARGET}_dynamic)
+      SET_TARGET_PROPERTIES( ${name}-${OROCOS_TARGET}_plugin PROPERTIES
+        VERSION "${version}"
+        OUTPUT_NAME ${name}-${OROCOS_TARGET}
+        COMPILE_DEFINITIONS "${RTT_DEFINITIONS}"
+        COMPILE_FLAGS "${CMAKE_CXX_FLAGS_ADD}"
+        INSTALL_RPATH_USE_LINK_PATH 1
+        INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib/orocos${OROCOS_SUFFIX}/types;${CMAKE_INSTALL_PREFIX}/lib;${AC_INSTALL_DIR}"
+
+        CLEAN_DIRECT_OUTPUT 1)
+      if (DLL_EXPORT_PREFIX)
+        string(TOUPPER ${DLL_EXPORT_PREFIX} UDLL_EXPORT_PREFIX )
+        set(DEFINE_PREFIX "RTT_${UDLL_EXPORT_PREFIX}_DLL_EXPORT")
+        SET_TARGET_PROPERTIES( ${name}-${OROCOS_TARGET}_plugin PROPERTIES DEFINE_SYMBOL "${DEFINE_PREFIX}")
+      endif()
   
   if(DLL_EXPORT_PREFIX)
     configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/rtt-${DLL_EXPORT_PREFIX}-config.h.in ${CMAKE_CURRENT_BINARY_DIR}/rtt-${DLL_EXPORT_PREFIX}-config.h @ONLY)

@@ -59,6 +59,10 @@
   #include "macosx/fosi.h"
 #endif
 
+#ifdef OROPKG_OS_RTEMS
+  #include "rtems/fosi.h"
+#endif
+
 #ifdef OROPKG_OS_WIN32
   #include "win32/fosi.h"
 #endif

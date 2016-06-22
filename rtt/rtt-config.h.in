@@ -24,6 +24,8 @@
 #endif
 # if defined( __GNUC__ ) && defined( __i386__ )
 #  define OROBLD_OS_ARCH_i386
+# elif defined( __RTEMS__ ) && defined( __SPARC__ )
+#  define OROBLD_OS_ARCH_sparc
 # elif defined( __GNUC__ ) && defined( __x86_64__ )
 #  define OROBLD_OS_ARCH_x86_64
 # elif defined( __GNUC__ ) && (defined( __powerpc__ ) || defined( __PPC__ ) )

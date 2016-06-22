@@ -19,6 +19,15 @@ endif()
 #                                                 #
 ###################################################
 
+SET( OROCOS_TARGET $ENV{OROCOS_TARGET}) 
+#Before create project to set cxx compiler
+set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/config") 
+                                                       
+IF ( NOT CMAKE_BUILD_TYPE STREQUAL "rtems") 
+  FIND_PACKAGE(RTEMS REQUIRED)               
+ENDIF ( NOT CMAKE_BUILD_TYPE STREQUAL "rtems")
+ 
+
 PROJECT(orocos-rtt)
 
 
@@ -27,6 +36,8 @@ STRING( REGEX MATCHALL "[0-9]+" RTT_VERSIONS ${RTT_VERSION} )
 LIST( GET RTT_VERSIONS 0 RTT_VERSION_MAJOR)
 LIST( GET RTT_VERSIONS 1 RTT_VERSION_MINOR)
 LIST( GET RTT_VERSIONS 2 RTT_VERSION_PATCH)
+
+SET(ROS_ROOT $ENV{ROS_ROOT}) #Don't know why is this there
 
 MESSAGE( "Orocos RTT version ${VERSION} (${RTT_VERSION_MAJOR}.${RTT_VERSION_MINOR}.${RTT_VERSION_PATCH})" )
 

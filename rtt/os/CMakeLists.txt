@@ -10,6 +10,7 @@ ADD_SUBDIRECTORY( lxrt )
 ADD_SUBDIRECTORY( xenomai )
 ADD_SUBDIRECTORY( ecos )
 ADD_SUBDIRECTORY( macosx )
+ADD_SUBDIRECTORY( rtems )
 ADD_SUBDIRECTORY( win32 )
 
 # Supported Hardware
@@ -19,6 +20,7 @@ ADD_SUBDIRECTORY( oro_powerpc )
 ADD_SUBDIRECTORY( oro_msvc )
 ADD_SUBDIRECTORY( oro_noasm )
 ADD_SUBDIRECTORY( oro_gcc )
+ADD_SUBDIRECTORY( oro_sparc )
 
 # Target specific config files
 ADD_SUBDIRECTORY( targets )

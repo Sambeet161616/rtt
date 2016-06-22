@@ -18,6 +18,7 @@
 # Just set OMNIORB4_DIR it to your specific installation directory
 #
 
+SET (OMNIORB4_DIR $ENV{OMNIORB4_DIR})
 FIND_PATH( OMNIORB4_INCLUDE_DIR omniORB4/CORBA.h
   PATHS
   ${OMNIORB4_DIR}/include
