@@ -120,8 +120,8 @@ endif(XERCES_FOUND)
 message("Orocos target is ${OROCOS_TARGET}")
 string(TOUPPER ${OROCOS_TARGET} OROCOS_TARGET_CAP)
 
-if ( NOT ";lxrt;gnulinux;xenomai;macosx;win32;" MATCHES ".*;${OROCOS_TARGET};.*")
-  message( FATAL_ERROR "OROCOS_TARGET=${OROCOS_TARGET} is an unkown target. Please use one of lxrt;gnulinux;xenomai;macosx;win32.")
+if ( NOT ";lxrt;gnulinux;xenomai;macosx;win32;rtems;" MATCHES ".*;${OROCOS_TARGET};.*")
+  message( FATAL_ERROR "OROCOS_TARGET=${OROCOS_TARGET} is an unkown target. Please use one of lxrt;gnulinux;xenomai;macosx;win32:rtems.")
 endif()
 
 # Setup flags for RTAI/LXRT

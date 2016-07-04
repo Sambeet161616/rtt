@@ -30,7 +30,7 @@
 # 
 # NOTE THE MANDATORY '/' instead of '\' on win32 platforms !
 #
-# set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "C:/orocos/Boost-1_36_0/include")
+set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/home/sambeet/NewRockPort/x86/Install/boost/include/boost")
 # set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "C:/orocos/Boost-1_36_0/lib")
 
 #

@@ -496,11 +496,7 @@ ELSE (_boost_IN_CACHE)
   ENDIF(WIN32)
 
   SET(_boost_INCLUDE_SEARCH_DIRS
-    C:/boost/include
-    C:/boost
-    "$ENV{ProgramFiles}/boost/include"
-    "$ENV{ProgramFiles}/boost"
-    /sw/local/include
+    "$ENV{INSTALL_PREFIX}/boost/include/"
   )
 
   # If BOOST_ROOT was defined in the environment, use it.
