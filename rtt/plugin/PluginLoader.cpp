@@ -1,12 +1,10 @@
 /***************************************************************************
   tag: The SourceWorks  Tue Sep 7 00:55:18 CEST 2010  PluginLoader.cpp
-
                         PluginLoader.cpp -  description
                            -------------------
     begin                : Tue September 07 2010
     copyright            : (C) 2010 The SourceWorks
     email                : peter@thesourceworks.com
-
  ***************************************************************************
  *   This library is free software; you can redistribute it and/or         *
  *   modify it under the terms of the GNU General Public                   *
@@ -53,9 +51,7 @@
 #include "../internal/GlobalService.hpp"
 
 #include <cstdlib>
-#ifndef __RTEMS__
 #include <dlfcn.h>
-#endif
 
 #include <vector>
 #include <set>
@@ -106,9 +102,7 @@ static const std::string default_delimiter(":");
 #endif
 
 /** Determine whether a file extension is actually part of a library version
-
     @return true if \a ext satisfies "^\.[:digit:]+$"
-
     So for example
     returns true  for ".1", ".12", ".123"
     returns false for ".a", "1", "123", ".123 ", "a", "", ".1.a", ".1a2"
@@ -131,24 +125,18 @@ RTT_API bool isExtensionVersion(const std::string& ext)
 }
 
 /* Is this a dynamic library that we should load from within a directory scan?
-
    Versioned libraries are not loaded, to prevent loading both libfoo.so and
    libfoo.so.1 (which is typically a symlink to libfoo.so, and so loading
    the same library twice).
-
    Libraries are either (NB x.y.z is version, and could also be x or x.y)
-
    Linux
    libfoo.so          = load this
    libfoo.so.x.y.z    = don't load this
-
    Windows
    libfoo.dll         = load this
-
    Mac OS X
    libfoo.dylib       = load this
    libfoo.x.y.z.dylib = don't load this
-
    All the above also apply without the "lib" prefix.
 */
 RTT_API bool isLoadableLibrary(const path& filename)
@@ -642,7 +630,6 @@ bool PluginLoader::isLoadedInternal(string file)
 
 // loads a single plugin in the current process.
 bool PluginLoader::loadInProcess(string file, string shortname, string kind, bool log_error) {
-    #ifndef __RTEMS__
     path p(file);
     char* error;
     void* handle;
@@ -703,7 +690,6 @@ bool PluginLoader::loadInProcess(string file, string shortname, string kind, boo
             log(Error) << "Plugin "<< plugname <<" reports to be compiled for OROCOS_TARGET "<< targetname
                     << " while we are running on target "<< OROCOS_TARGET_NAME <<". Unloading."<<endlog();
             dlclose(handle);
-            #endif
             return false;
         }
 
